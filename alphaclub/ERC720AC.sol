@@ -35,7 +35,7 @@ contract ERC721AC is IERC721, IERC721Metadata {
     uint                                                                private count;
     mapping (uint => uint)                                              private id2URI;
     mapping (uint => string)                                            private URIs;
-    mapping (address => uint)                                           private lists;
+    mapping (address => mapping (uint => uint))                         private lists;
 
     modifier OnlyOwner () {
 
@@ -115,7 +115,9 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
         unchecked {
 
-            for (uint i; i < to.length; ++i) lists[to[i]] = URIID;
+            for (uint i; i < to.length; ++i) 
+                if (lists[to[i]][URIID] == 0) 
+                    lists[to[i]][URIID] = 1;
 
         }
 
@@ -123,12 +125,16 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
     function mint (address to, uint URIID) external {
 
-        assert(URIID > 0 && lists[to] == URIID);
+        assert(URIID > 0 && lists[to][URIID] == 1);
 
-        ownerOf[++count] = to;
-        id2URI[count] = URIID;
-        ++balanceOf[to];
-        delete lists[to];
+        unchecked {
+
+            ownerOf[++count] = to;
+            id2URI[count] = URIID;
+            ++balanceOf[to];
+            lists[to][URIID] = 2;
+
+        }
 
     }
 
