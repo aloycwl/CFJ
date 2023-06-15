@@ -27,10 +27,22 @@ contract ERC721AC is IERC721, IERC721Metadata {
     address                                                             public owner;
     string constant                                                     public name = "Alpha Club";
     string constant                                                     public symbol = "ALC";
-    mapping(uint=>address)                                              public ownerOf;
-    mapping(address=>uint)                                              public balanceOf;
-    mapping(uint=>address)                                              public getApproved;
-    mapping(address=>mapping(address=>bool))                            public isApprovedForAll;
+    mapping (uint => address)                                           public ownerOf;
+    mapping (address => uint)                                           public balanceOf;
+    mapping (uint => address)                                           public getApproved;
+    mapping (address => mapping(address => bool))                       public isApprovedForAll;
+
+    uint                                                                private count;
+    mapping (uint => uint)                                              private id2URI;
+    mapping (uint => string)                                            private URIs;
+    mapping (address => uint)                                           private lists;
+
+    modifier OnlyOwner () {
+
+        assert(msg.sender == owner);
+        _;
+
+    }
 
     constructor() {
 
@@ -38,44 +50,44 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
     }
 
-    function supportsInterface(bytes4 i) external pure returns(bool) {
+    function supportsInterface (bytes4 i) external pure returns (bool) {
 
-        return i == type(IERC721).interfaceId || i == type(IERC721Metadata).interfaceId;
+        return i == type (IERC721).interfaceId || i == type (IERC721Metadata).interfaceId;
 
     }
     
-    function tokenURI(uint) external pure returns(string memory) {
+    function tokenURI (uint) external pure returns (string memory) {
 
         return "";
 
     }
 
-    function approve(address to, uint id) external {
+    function approve (address to, uint id) external {
 
         assert(msg.sender == ownerOf[id] || isApprovedForAll[ownerOf[id]][msg.sender]);
-        emit Approval(ownerOf[id], getApproved[id] = to, id);
+        emit Approval (ownerOf[id], getApproved[id] = to, id);
 
     }
     
-    function setApprovalForAll(address to, bool bol) external {
+    function setApprovalForAll (address to, bool bol) external {
 
-        emit ApprovalForAll(msg.sender, to, isApprovedForAll[msg.sender][to] = bol);
+        emit ApprovalForAll (msg.sender, to, isApprovedForAll[msg.sender][to] = bol);
 
     }
     
-    function safeTransferFrom(address from, address to, uint id) external {
+    function safeTransferFrom (address from, address to, uint id) external {
 
         transferFrom(from, to, id);
 
     }
 
-    function safeTransferFrom(address from, address to, uint id, bytes memory) external {
+    function safeTransferFrom (address from, address to, uint id, bytes memory) external {
 
-        transferFrom(from, to, id);
+        transferFrom (from, to, id);
 
     }
 
-    function transferFrom(address from, address to, uint id) public { 
+    function transferFrom (address from, address to, uint id) public { 
 
         address _owner = ownerOf[id];
 
@@ -92,4 +104,32 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
         }
     }
+
+    function setURIs (uint id, string calldata uri) external OnlyOwner {
+
+        URIs[id] = uri;
+
+    }
+
+    function whitelist (address[] memory to, uint URIID) external OnlyOwner {
+
+        unchecked {
+
+            for (uint i; i < to.length; ++i) lists[to[i]] = URIID;
+
+        }
+
+    }
+
+    function mint (address to, uint URIID) external {
+
+        assert(URIID > 0 && lists[to] == URIID);
+
+        ownerOf[++count] = to;
+        id2URI[count] = URIID;
+        ++balanceOf[to];
+        delete lists[to];
+
+    }
+
 }
