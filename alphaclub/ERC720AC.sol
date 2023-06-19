@@ -137,6 +137,8 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
         }
 
+        emit Transfer(address(0),to,count);
+
     }
 
 }
