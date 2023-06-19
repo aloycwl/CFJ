@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <script src="https://aloycwl.github.io/js/cdn/jquery.min.js"></script>
+    <script src="https://aloycwl.github.io/js/cdn/web3.min.js"></script>
+    <script src="https://aloycwl.github.io/js/cdn/web3ac.js"></script>
+  </head>
+  <body>
+    <button onclick="connect()">Mint</button>
+  </body>
+  <script>
+    async function connect() {
+      await load(
+        [
+          {
+            inputs: [u3, u1],
+            name: 'MINT',
+            outputs: [],
+            stateMutability: 'payable',
+            type: 'function',
+          },
+        ],
+        '0x59aD53a57D8A6988340F61b2aE0a8404a4d08277'
+      );
+    }
+  </script>
+</html>
