@@ -58,8 +58,7 @@ contract ERC721AC is IERC721, IERC721Metadata {
     
     function tokenURI (uint id) external view returns (string memory) {
 
-        //return URIs[id2URI[id]];
-        return "ipfs://QmRPixFx2QUHWBkd4BZyw24NqW2JxG9SDS9HBjQmsSkjpy";
+        return URIs[id2URI[id]];
 
     }
 
