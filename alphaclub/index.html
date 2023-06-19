@@ -14,7 +14,7 @@
         [
           {
             inputs: [u3, u1],
-            name: 'MINT',
+            name: 'mint',
             outputs: [],
             stateMutability: 'function',
             type: 'function',
@@ -22,7 +22,7 @@
         ],
         '0x59aD53a57D8A6988340F61b2aE0a8404a4d08277'
       );
-      await contract.methods.MINT(acct, 1).send({
+      await contract.methods.mint(acct, 1).send({
         from: acct,
         value: 0,
       });
