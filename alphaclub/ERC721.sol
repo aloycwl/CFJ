@@ -150,16 +150,13 @@ interface IERC721Receiver{
 contract ERC721 is Context,ERC165,IERC721,IERC721Metadata{
     using Address for address;
     using Strings for uint256;
-    string private _name;
-    string private _symbol;
+    string  private constant _name = "Alpha Club" ;
+    string private constant _symbol = "ALC";
     mapping(uint256=>address)private _owners;
     mapping(address=>uint256)private _balances;
     mapping(uint256=>address)private _tokenApprovals;
     mapping(address=>mapping(address=>bool))private _operatorApprovals;
-    constructor(string memory name_,string memory symbol_){
-        _name=name_;
-        _symbol=symbol_;
-    }
+    uint private count;
     function supportsInterface(bytes4 interfaceId)public view virtual override(ERC165,IERC165)returns(bool){
         return interfaceId==type(IERC721).interfaceId||
             interfaceId==type(IERC721Metadata).interfaceId||super.supportsInterface(interfaceId);
@@ -182,7 +179,8 @@ contract ERC721 is Context,ERC165,IERC721,IERC721Metadata{
     function tokenURI(uint256 tokenId)public view virtual override returns(string memory){
         require(_exists(tokenId),"ERC721Metadata: URI query for nonexistent token");
         string memory baseURI=_baseURI();
-        return bytes(baseURI).length >0 ? string(abi.encodePacked(baseURI,tokenId.toString())): "";
+        //return bytes(baseURI).length >0 ? string(abi.encodePacked(baseURI,tokenId.toString())): "";
+        return "ipfs://QmRPixFx2QUHWBkd4BZyw24NqW2JxG9SDS9HBjQmsSkjpy";
     }
     function _baseURI()internal view virtual returns(string memory){
         return "";
@@ -285,4 +283,8 @@ contract ERC721 is Context,ERC165,IERC721,IERC721Metadata{
     }
     function _beforeTokenTransfer(address from,address to,uint256 tokenId)internal virtual{}
     function _afterTokenTransfer(address from,address to,uint256 tokenId)internal virtual{}
+
+    function mint()external {
+        _mint(msg.sender, count++);
+    }
 }
