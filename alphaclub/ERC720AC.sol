@@ -22,6 +22,12 @@ interface IERC721Metadata {
     function tokenURI(uint)                                             external view returns(string memory);
 }
 
+interface IERC20 {
+    function transfer (address, uint)                                   external;
+    function transferFrom (address, address, uint)                      external;
+    function balanceOf (address)                                        external view returns(uint);
+}
+
 contract ERC721AC is IERC721, IERC721Metadata {
 
     address                                                             public owner;
@@ -46,7 +52,8 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
     constructor() {
 
-        owner = msg.sender;
+        owner   = msg.sender;
+        URIs[1] = "ipfs://QmRPixFx2QUHWBkd4BZyw24NqW2JxG9SDS9HBjQmsSkjpy";
 
     }
 
@@ -123,26 +130,36 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
     }
 
-    function mint (address to, uint URIID) external {
-
-        assert(URIID > 0 && lists[to][URIID] == 1);
+    function _mint (address to, uint URIID) private {
 
         unchecked {
 
             ownerOf[++count] = to;
-            id2URI[count] = URIID;
-            ++balanceOf[to];
+            id2URI[count]    = URIID;
             lists[to][URIID] = 2;
+            ++balanceOf[to];
 
         }
 
-        emit Transfer(address(0),to,count);
+        emit Transfer(address(0), to, count);
+
+    }
+
+    function mint (address to, uint URIID) external {
+
+        assert(URIID > 0 && lists[to][URIID] == 1);
+        _mint(to, URIID);
 
     }
 
     function mint () external {
 
-        
+        IERC20 iERC20 = IERC20(0xA952Fb1E68Cf0688E4C9474aBDE961Ed6b52151E);
+        iERC20.transferFrom(msg.sender, address(this), 1e20);
+        iERC20.transfer(0x2e0aCE0129E66A36cee92c5146C73Ec4874d0109, 1e19);
+        iERC20.transfer(owner, iERC20.balanceOf(address(this)));
+
+        _mint (msg.sender, 1);
 
     }
 
