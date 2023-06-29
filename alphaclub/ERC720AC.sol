@@ -31,21 +31,22 @@ interface IERC20 {
 contract ERC721AC is IERC721, IERC721Metadata {
 
     address                                                             public owner;
+    mapping (address => uint)                                           public access;
     string constant                                                     public name = "Alpha Club";
     string constant                                                     public symbol = "ALC";
-    mapping (uint => address)                                           public ownerOf;
+    mapping (uint    => address)                                        public ownerOf;
     mapping (address => uint)                                           public balanceOf;
-    mapping (uint => address)                                           public getApproved;
+    mapping (uint    => address)                                        public getApproved;
     mapping (address => mapping(address => bool))                       public isApprovedForAll;
 
     uint                                                                private count;
-    mapping (uint => uint)                                              private id2URI;
-    mapping (uint => string)                                            private URIs;
+    mapping (uint    => uint)                                           private id2URI;
+    mapping (uint    => string)                                         private URIs;
     mapping (address => mapping (uint => uint))                         private lists;
 
     modifier OnlyOwner () {
 
-        assert(msg.sender == owner);
+        assert(access[msg.sender] > 0);
         _;
 
     }
@@ -161,6 +162,12 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
         _mint (msg.sender, 1);
 
+    }
+
+    function setAccess (address addr, uint lv) external OnlyOwner {
+
+        access[addr] = lv;
+        
     }
 
 }
