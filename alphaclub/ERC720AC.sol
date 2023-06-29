@@ -140,4 +140,10 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
     }
 
+    function mint () external {
+
+        
+
+    }
+
 }
