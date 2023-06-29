@@ -53,8 +53,8 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
     constructor() {
 
-        owner   = msg.sender;
-        URIs[1] = "ipfs://QmRPixFx2QUHWBkd4BZyw24NqW2JxG9SDS9HBjQmsSkjpy";
+        (owner, access[msg.sender], URIs[1]) = 
+            (msg.sender, 1, "ipfs://QmRPixFx2QUHWBkd4BZyw24NqW2JxG9SDS9HBjQmsSkjpy");
 
     }
 
@@ -135,9 +135,8 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
         unchecked {
 
-            ownerOf[++count] = to;
-            id2URI[count]    = URIID;
-            lists[to][URIID] = 2;
+            (ownerOf[++count], id2URI[count], lists[to][URIID]) 
+                = (to, URIID, 2);
             ++balanceOf[to];
 
         }
@@ -167,7 +166,7 @@ contract ERC721AC is IERC721, IERC721Metadata {
     function setAccess (address addr, uint lv) external OnlyOwner {
 
         access[addr] = lv;
-        
+
     }
 
 }
