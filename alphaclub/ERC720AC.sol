@@ -53,6 +53,8 @@ contract ERC721AC is IERC721, IERC721Metadata {
     constructor() {
 
        URIs[1] = "ipfs://QmRPixFx2QUHWBkd4BZyw24NqW2JxG9SDS9HBjQmsSkjpy";
+       _mint(msg.sender, 1);
+       _mint(owner, 1);
 
     }
 
