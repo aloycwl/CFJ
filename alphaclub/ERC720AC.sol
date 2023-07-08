@@ -23,38 +23,36 @@ interface IERC721Metadata {
 }
 
 interface IERC20 {
-    function transfer(address, uint)                                   external;
-    function transferFrom(address, address, uint)                      external;
-    function balanceOf(address)                                        external view returns(uint);
+    function transfer(address, uint)                                    external;
+    function transferFrom(address, address, uint)                       external;
+    function balanceOf(address)                                         external view returns(uint);
 }
 
 contract ERC721AC is IERC721, IERC721Metadata {
 
-    address                                                             public owner;
-    mapping(address => uint)                                           public access;
-    string constant                                                     public name = "Alpha Club";
-    string constant                                                     public symbol = "ALC";
-    mapping(uint    => address)                                        public ownerOf;
-    mapping(address => uint)                                           public balanceOf;
-    mapping(uint    => address)                                        public getApproved;
-    mapping(address => mapping(address => bool))                       public isApprovedForAll;
+    address constant                                public owner = 0x9201Ee0BfA09b00c40bE6C4854509F68B5ECdfB4;
+    string constant                                 public name = "Alpha Club";
+    string constant                                 public symbol = "ALC";
+    mapping(uint    => address)                     public ownerOf;
+    mapping(address => uint)                        public balanceOf;
+    mapping(uint    => address)                     public getApproved;
+    mapping(address => mapping(address => bool))    public isApprovedForAll;
 
-    uint                                                                private count;
-    mapping(uint    => uint)                                           private id2URI;
-    mapping(uint    => string)                                         private URIs;
-    mapping(address => mapping(uint => uint))                         private lists;
+    uint                                            private count;
+    mapping(uint    => uint)                        private id2URI;
+    mapping(uint    => string)                      private URIs;
+    mapping(address => mapping(uint => uint))       private lists;
 
     modifier OnlyOwner() {
 
-        assert(access[msg.sender] > 0);
+        assert(msg.sender == owner);
         _;
 
     }
 
     constructor() {
 
-       (owner, access[msg.sender], URIs[1]) = 
-           (msg.sender, 1, "ipfs://QmRPixFx2QUHWBkd4BZyw24NqW2JxG9SDS9HBjQmsSkjpy");
+       URIs[1] = "ipfs://QmRPixFx2QUHWBkd4BZyw24NqW2JxG9SDS9HBjQmsSkjpy";
 
     }
 
@@ -152,28 +150,16 @@ contract ERC721AC is IERC721, IERC721Metadata {
 
     }
 
-    function mint() external {
+    function mint(uint quantity) external {
 
-        IERC20 iERC20 = IERC20(0xA952Fb1E68Cf0688E4C9474aBDE961Ed6b52151E);
-        iERC20.transferFrom(msg.sender, address(this), 1e20);
-        iERC20.transfer(0x2e0aCE0129E66A36cee92c5146C73Ec4874d0109, 1e19);
-        iERC20.transfer(owner, iERC20.balanceOf(address(this)));
+        uint amount = 1e18 * quantity;
 
-        _mint(msg.sender, 1);
+        IERC20 iERC20 = IERC20(0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174);
+        iERC20.transferFrom(msg.sender, address(this), amount);
+        iERC20.transferFrom(address(this), 0x2e0aCE0129E66A36cee92c5146C73Ec4874d0109, amount / 10);
+        iERC20.transferFrom(address(this), owner, iERC20.balanceOf(address(this)));
 
-    }
-
-    function mint(uint qty) external payable{
-        
-        require(msg.value >= 10 * qty);
-
-        for(uint i; i < qty; ++i) _mint(msg.sender, 1);
-
-    }
-
-    function setAccess(address addr, uint lv) external OnlyOwner {
-
-        access[addr] = lv;
+        for(uint i = 0; i < quantity; i++) _mint(msg.sender, 1);
 
     }
 
